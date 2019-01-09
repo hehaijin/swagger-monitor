@@ -11,25 +11,35 @@ const fs = require('fs');
 
 class SwaggerMonitor {
   // work with 2 modes, override, or not
-
-  constructor(title, description, version) {
-    this.swaggerjson = {
+  constructor(filePath, override){
+	  this.override = override? override: true; 
+	  if(!filePath){
+		 this.swaggerjson = {
       openapi: '3.0.0',
-      info: {
-        title,
-        description,
-        version
-      },
+      info: {},
       servers: [],
       paths: {}
-    };
-    this.totalRoutes = new Set();
-    this.hitRoutes = new Set();
+    };  
+	  }
+	  else
+	  try{
+	  this.swaggerjson= fs.fs.readFileSync(filepath)
+	  }catch(error){
+		console.log(`Failed to read file ${filePath} because ${error.message}`);  
+	  }
+	  this.totalRoutes = new Set();
+	  this.hitRoutes = new Set();
   }
 
-  createFromFile(file){
-    return new SwaggerAPI();
+  addMetaData(title, description, version) {
+	if(this.override === false) {
+	   throw new Error('Can not write meta data to config file since override mode is false');
+	}		
+    this.swaggerjson.info.title = title;
+	this.swaggerjson.info.description = description;
+	this.swaggerjson.info.version = version;
   }
+  
 
   // adds all routes from express app.
   // no need to check existence of path anymore.
@@ -63,9 +73,7 @@ class SwaggerMonitor {
       });
     });
     server.get('/api-json', (req, res, next) => {
-
       res.send(this.swaggerjson);
-
     });
 
   }
