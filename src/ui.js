@@ -1,20 +1,19 @@
 'use strict'
 
 
-const SwaggerMonitor = require('./swaggerMonitor');
+const SwaggerMonitor = require('./swagger-monitor');
 const swaggerUi = require('swagger-ui-express');
-const fs= require('fs');
+const fs = require('fs');
 
 
-
-
-module.expors= function addSwaggerMonitor(server, jsonFilePath){	
-	const swaggerMonitor = new SwaggerMonitor('Rhodes Fusion', 'web API for rhodes fusion data service', '0.1.0');
-	SwaggerMonitor.addServer('http://localhost:4202/', 'default test server');
-	server.use('/api-docs', swaggerUi.serve, (req,res,next)=>{
-	swaggerUi.setup(swaggerMonitor.swaggerjson,options)(req,res,next);
-});
-	swagger.get('/api-json',(req,res,next)=>{
-		res.send(swaggerMonitor.swaggerjson);
-	});	
+module.exports = function addSwaggerMonitor(server, jsonFilePath) {
+    const swaggerMonitor = new SwaggerMonitor(jsonFilePath);
+    swaggerMonitor.addServer('http://localhost:4202/', 'default test server');
+    swaggerMonitor.addExpressApp(server);
+    server.use('/api-docs', swaggerUi.serve, (req, res, next) => {
+        swaggerUi.setup(swaggerMonitor.swaggerjson)(req, res, next);
+    });
+    server.get('/api-json', (req, res, next) => {
+        res.send(swaggerMonitor.swaggerjson);
+    });
 }

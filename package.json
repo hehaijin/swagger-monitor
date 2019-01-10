@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "express": "^4.16.4",
     "json-schema-generator": "^2.0.6",
     "swagger-ui-express": "^4.0.2"
   }
