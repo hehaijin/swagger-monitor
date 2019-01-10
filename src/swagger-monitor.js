@@ -2,6 +2,7 @@
 
 const util = require('util');
 const schemaGenerator = require('json-schema-generator');
+const swaggerUi = require('swagger-ui-express');
 const fs = require('fs');
 
 /**
@@ -10,8 +11,6 @@ const fs = require('fs');
 
 class SwaggerMonitor {
     // work with 2 modes, override, or not
-
-
     constructor(filePath, override) {
         console.log(filePath);
         this.defaultFilePath = './swaggerconfig.json';
@@ -67,7 +66,7 @@ class SwaggerMonitor {
 
     // adds all routes from express app.
     // no need to check existence of path anymore.
-    addExpressApp(server) {
+    addExpressServer(server) {
         const self = this;
 
         function addRoutes() {
@@ -87,6 +86,10 @@ class SwaggerMonitor {
         // if(!server._router) throw new Error('there must be routes in the express server, consider change the where you put the route ')
         this.saveJson();
         server.use(this.autoCapture.bind(this));
+
+        server.use('/api-docs', swaggerUi.serve, (req, res, next) => {
+            swaggerUi.setup(this.swaggerjson)(req, res, next);
+        });
         server.get('/api-json', (req, res, next) => {
             res.send(this.swaggerjson);
         });

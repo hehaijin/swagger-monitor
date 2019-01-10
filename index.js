@@ -1,4 +1,4 @@
 'use strict'
 
-const addSwaggerMonitor = require('./src/ui');
-module.exports = addSwaggerMonitor;
+const SwaggerMonitor = require('./src/Swagger-monitor');
+module.exports = SwaggerMonitor;
